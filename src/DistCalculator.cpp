@@ -91,7 +91,7 @@ int64_t DistCalculator::dist(Node a, Node b) {
         visited[i] = false;
     int distance = 0;
     if (a == b)
-        return 0;
+        return distance;
     else {
         std::list<int>actorQueue;
         std::list<int>swapQueue;
@@ -104,7 +104,6 @@ int64_t DistCalculator::dist(Node a, Node b) {
                 swapQueue.clear();
             }
             s = actorQueue.front();
-            actorQueue.pop_front();
             visited[s] = true;
             for (int i = 0; i < actorMovies[s].size(); i++){
                 for (int j = 0; j < movieActors[actorMovies[s][i]].size(); j++) {
@@ -115,6 +114,7 @@ int64_t DistCalculator::dist(Node a, Node b) {
                         return distance;
                 }
             }
+            actorQueue.clear();
         }
     }
     return -1;
