@@ -110,17 +110,17 @@ int64_t DistCalculator::dist(Node a, Node b) {
                 swapQueue.clear();
             }
             s = actorQueue.front();
-            for (int i = 0; i < actorMovies[s].size(); i++){
-                if (visitedMovies[i]) //besuchte movies werden übersprungen
+
+            for (auto& movie: actorMovies[s]){
+                if (visitedMovies[movie]) //besuchte movies werden übersprungen
                     continue;
-                for (int j = 0; j < movieActors[actorMovies[s][i]].size(); j++) {
-                    visitedMovies[i] = true; //movies werden auf besucht gesetzt
-                    int elem = movieActors[actorMovies[s][i]][j];
-                    if ((b != elem) && (!visitedActors[elem])) {
-                        swapQueue.push_back(elem);
-                        visitedActors[elem] = true;
+                for (auto& actor : movieActors[movie]) {
+                    visitedMovies[movie] = true; //movies werden auf besucht gesetzt
+                    if ((b != actor) && (!visitedActors[actor])) {
+                        swapQueue.push_back(actor);
+                        visitedActors[actor] = true;
                     }
-                    else if (b == elem)
+                    else if (b == actor)
                         return distance;
                 }
             }
