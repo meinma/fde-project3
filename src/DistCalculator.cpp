@@ -85,9 +85,15 @@ DistCalculator::DistCalculator(std::string edgeListFile) {
 
 // Node a und b sind nur Zahlen
 int64_t DistCalculator::dist(Node a, Node b) {
-    bool * visited = new bool[actorMovies.size() + 1];
+    // speichert alle besuchten Actors, damit um mehrmaliges Besuchen zu verhindern
+    bool * visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
-        visited[i] = false;
+        visitedActors[i] = false;
+    //speichert alle Movies, um mehrmaliges Besuchen zu verhindern
+    bool * visitedMovies = new bool[movieActors.size() + 1];
+    for (int i = 0; i < movieActors.size(); i++)
+        visitedMovies[i] = false;
+    //Initialisieren der Distanz
     int distance = 0;
     if (a == b)
         return distance;
@@ -95,7 +101,7 @@ int64_t DistCalculator::dist(Node a, Node b) {
         std::vector<int>actorQueue;
         std::vector<int>swapQueue;
         swapQueue.push_back(a);
-        visited[a] = true;
+        visitedActors[a] = true;
         int s;
         while(!swapQueue.empty() && distance < 6) {
             if (actorQueue.empty()){
@@ -105,11 +111,14 @@ int64_t DistCalculator::dist(Node a, Node b) {
             }
             s = actorQueue.front();
             for (int i = 0; i < actorMovies[s].size(); i++){
+                if (visitedMovies[i]) //besuchte movies werden übersprungen
+                    continue;
                 for (int j = 0; j < movieActors[actorMovies[s][i]].size(); j++) {
+                    visitedMovies[i] = true; //movies werden auf besucht gesetzt
                     int elem = movieActors[actorMovies[s][i]][j];
-                    if ((b != elem) && (!visited[elem])) {
+                    if ((b != elem) && (!visitedActors[elem])) {
                         swapQueue.push_back(elem);
-                        visited[elem] = true;
+                        visitedActors[elem] = true;
                     }
                     else if (b == elem)
                         return distance;
