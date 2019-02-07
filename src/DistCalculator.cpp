@@ -6,7 +6,6 @@
 #include <vector>
 #include <fstream>
 #include <unordered_set>
-#include <list>
 
 DistCalculator::DistCalculator(std::string edgeListFile) {
     std::ifstream stream;
@@ -93,23 +92,25 @@ int64_t DistCalculator::dist(Node a, Node b) {
     if (a == b)
         return distance;
     else {
-        std::list<int>actorQueue;
-        std::list<int>swapQueue;
+        std::vector<int>actorQueue;
+        std::vector<int>swapQueue;
         swapQueue.push_back(a);
+        visited[a] = true;
         int s;
         while(!swapQueue.empty() && distance < 6) {
             if (actorQueue.empty()){
                 distance++;
-                actorQueue = swapQueue;
+                std::swap(actorQueue,swapQueue);
                 swapQueue.clear();
             }
             s = actorQueue.front();
-            visited[s] = true;
             for (int i = 0; i < actorMovies[s].size(); i++){
                 for (int j = 0; j < movieActors[actorMovies[s][i]].size(); j++) {
                     int elem = movieActors[actorMovies[s][i]][j];
-                    if ((b != elem) && (!visited[elem]))
+                    if ((b != elem) && (!visited[elem])) {
                         swapQueue.push_back(elem);
+                        visited[elem] = true;
+                    }
                     else if (b == elem)
                         return distance;
                 }
