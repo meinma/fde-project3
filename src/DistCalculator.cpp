@@ -86,9 +86,8 @@ DistCalculator::DistCalculator(std::string edgeListFile) {
 
 // Node a und b sind nur Zahlen
 int64_t DistCalculator::dist(Node a, Node b) {
-    bool * visited = new bool[actorMovies.size()];
-    for (int i = 0; i < actorMovies.size(); i++)
-        visited[i] = false;
+    bool * visited = new bool[actorMovies.size() + 1];
+    std::fill_n(visited,actorMovies.size()+1,false);
     int distance = 0;
     if (a == b)
         return distance;

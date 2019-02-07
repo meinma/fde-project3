@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <future>
 #include "DistCalculator.hpp"
 
 //---------------------------------------------------------------------------
@@ -18,9 +19,25 @@ int main(int argc, char *argv[])
    // Create dist calculator
    DistCalculator dc(playedinFile);
 
+   //Add threads
+   std::vector<std::future<int64_t>> threads;
+
+
+
    // read queries from standard in and return distances
    DistCalculator::Node a, b;
-   while (cin >> a && cin >> b) cout << dc.dist(a, b) << "\n";
+   //while (cin >> a && cin >> b) cout << dc.dist(a, b) << "\n";
+
+   //new while
+   while (cin >> a && cin >>b){
+      threads.push_back(std::async(std::launch::async,&DistCalculator::dist,dc,a,b));
+   }
+
+   for (std::vector<std::future<int64_t >>::iterator iterator = threads.begin(); iterator != threads.end(); iterator++)
+      cout << iterator->get() << "\n";
+   //Clear vector after usage
+   threads.clear();
+
 
    // flush output buffer
    cout.flush();
