@@ -51,7 +51,7 @@ DistCalculator::DistCalculator(std::string edgeListFile)
 int64_t DistCalculator::dist(Node a, Node b) {
     if (a == b)
         return 0;
-
+    end = false;
     // Alles für Bidirektionale BFS von a aus
     bool *a_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
@@ -68,9 +68,12 @@ int64_t DistCalculator::dist(Node a, Node b) {
     a_visitedActors[a] = true;
 
     // Alles für Bidirektionale BFS von b aus
+    //Verscuh mit nur einer visitedActor Liste
+
     bool *b_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
         b_visitedActors[i] = false;
+
     //speichert alle Movies, um mehrmaliges Besuchen zu verhindern
     bool *b_visitedMovies = new bool[movieActors.size() + 1];
     for (int i = 0; i < movieActors.size(); i++)
@@ -83,19 +86,18 @@ int64_t DistCalculator::dist(Node a, Node b) {
     b_visitedActors[b] = true;
 
     while (!a_swapQueue.empty() && !b_swapQueue.empty() && a_dist+b_dist < 6) {
-      bfs(a_visitedActors,a_visitedMovies,&a_swapQueue,&a_actorQueue,0);
-      if (interselect(a_visitedActors,b_visitedActors))
+      bfs(a_visitedActors,b_visitedActors,a_visitedMovies,&a_swapQueue,&a_actorQueue,0);
+      if (end)
           return a_dist + b_dist;
-      bfs(b_visitedActors,b_visitedMovies,&b_swapQueue,&b_actorQueue,1);
-      if (interselect(a_visitedActors,b_visitedActors))
-          return a_dist + b_dist;
+      bfs(b_visitedActors,a_visitedActors,b_visitedMovies,&b_swapQueue,&b_actorQueue,1);
+      if (end)
+          return  a_dist + b_dist;
     }
     return -1;
-
 }
 
 
-void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<int> *swapQueue, std::vector<int> *actorQueue, bool a) {
+void DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *visitedMovies, std::vector<int> *swapQueue, std::vector<int> *actorQueue, bool a) {
     if (a)
         a_dist++;
     else
@@ -108,22 +110,15 @@ void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<i
             continue;
         visitedMovies[movie] = true; //movies auf besucht setzen
         for (auto &actor : movieActors[movie]) {
-            if (!visitedActors[actor]) {
+            if (!visitedActors[actor] && !otherVisitedActors[actor]) {
                 swapQueue->push_back(actor);
                 visitedActors[actor] = true;
             }
+            else if (otherVisitedActors[actor])
+                end = true;
         }
     }
     actorQueue->clear();
 }
 
-
-// Für bidirektionale BFS notwenidg um zu sehen, wenn beide BFS aufeinander treffen
-bool DistCalculator::interselect(bool *s_visited, bool *t_visited) {
-    for (int i = 0; i < actorMovies.size(); i++) {
-        if (s_visited[i] && t_visited[i])
-            return true;
-    }
-    return false;
-}
 
