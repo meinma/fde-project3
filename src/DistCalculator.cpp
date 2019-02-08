@@ -51,7 +51,8 @@ DistCalculator::DistCalculator(std::string edgeListFile)
 int64_t DistCalculator::dist(Node a, Node b) {
     if (a == b)
         return 0;
-    end = false;
+    int a_dist;
+    int b_dist;
     // Alles für Bidirektionale BFS von a aus
     bool *a_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
@@ -62,6 +63,7 @@ int64_t DistCalculator::dist(Node a, Node b) {
         a_visitedMovies[i] = false;
     //Initialisieren der Distanz
     a_dist = 0;
+    b_dist = 0;
     std::vector<int> a_swapQueue;
     std::vector<int> a_actorQueue;
     a_swapQueue.push_back(a);
@@ -85,10 +87,10 @@ int64_t DistCalculator::dist(Node a, Node b) {
     b_visitedActors[b] = true;
 
     while (!a_swapQueue.empty() && !b_swapQueue.empty() && a_dist+b_dist < 6) {
-      bfs(a_visitedActors,b_visitedActors,a_visitedMovies,&a_swapQueue,&a_actorQueue,0);
+      auto end = bfs(a_visitedActors,b_visitedActors,a_visitedMovies,&a_swapQueue,&a_actorQueue,0, a_dist, b_dist);
       if (end)
           return a_dist + b_dist;
-      bfs(b_visitedActors,a_visitedActors,b_visitedMovies,&b_swapQueue,&b_actorQueue,1);
+      end = bfs(b_visitedActors,a_visitedActors,b_visitedMovies,&b_swapQueue,&b_actorQueue,1, a_dist, b_dist);
       if (end)
           return  a_dist + b_dist;
     }
@@ -96,7 +98,8 @@ int64_t DistCalculator::dist(Node a, Node b) {
 }
 
 
-void DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *visitedMovies, std::vector<int> *swapQueue, std::vector<int> *actorQueue, bool a) {
+bool DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *visitedMovies, std::vector<int> *swapQueue, std::vector<int> *actorQueue, bool a,
+      int& a_dist, int& b_dist) {
     if (a)
         a_dist++;
     else
@@ -114,10 +117,11 @@ void DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *vi
                 visitedActors[actor] = true;
             }
             else if (otherVisitedActors[actor])
-                end = true;
+               return true;
         }
     }
     actorQueue->clear();
+    return false;
 }
 
 
