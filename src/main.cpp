@@ -20,14 +20,14 @@ int main(int argc, char *argv[])
    DistCalculator dc(playedinFile);
 
    //Add threads
-   //std::vector<std::future<int64_t>> threads;
+   std::vector<std::future<int64_t>> threads;
 
 
 
    // read queries from standard in and return distances
    DistCalculator::Node a, b;
-   while (cin >> a && cin >> b) cout << dc.dist(a, b) << "\n";
-/*
+   //while (cin >> a && cin >> b) cout << dc.dist(a, b) << "\n";
+
    //new while
 
    while (cin >> a && cin >>b){
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
    //Clear vector after usage
    threads.clear();
 
-*/
+
 
    // flush output buffer
    cout.flush();
