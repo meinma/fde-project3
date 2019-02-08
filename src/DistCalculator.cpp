@@ -24,7 +24,6 @@ DistCalculator::DistCalculator(std::string edgeListFile)
       movieActors.resize(std::max(maxMovieId + 1, 50));
       stream.clear();
       stream.seekg(0, std::ios::beg);
-      int counter = 0;
       // Skip first line
       std::getline(stream, line);
       // Read line by line of the input file
@@ -44,7 +43,6 @@ DistCalculator::DistCalculator(std::string edgeListFile)
          actorMovies[actorId].push_back(movieId);
          movieActors[movieId].push_back(actorId);
       }
-      // Nach dem ersten Durchlauf
    }
 }
 
@@ -65,6 +63,7 @@ int64_t DistCalculator::dist(Node a, Node b) {
     //Initialisieren der Distanz
     a_dist = 0;
     std::vector<int> a_swapQueue;
+    std::vector<int> a_actorQueue;
     a_swapQueue.push_back(a);
     a_visitedActors[a] = true;
 
@@ -79,14 +78,15 @@ int64_t DistCalculator::dist(Node a, Node b) {
     //Initialisieren der Distanz
     b_dist = 0;
     std::vector<int> b_swapQueue;
+    std::vector<int> b_actorQueue;
     b_swapQueue.push_back(b);
     b_visitedActors[b] = true;
 
     while (!a_swapQueue.empty() && !b_swapQueue.empty() && a_dist+b_dist < 6) {
-      bfs(a_visitedActors,a_visitedMovies,&a_swapQueue,0);
+      bfs(a_visitedActors,a_visitedMovies,&a_swapQueue,&a_actorQueue,0);
       if (interselect(a_visitedActors,b_visitedActors))
           return a_dist + b_dist;
-      bfs(b_visitedActors,b_visitedMovies,&b_swapQueue,1);
+      bfs(b_visitedActors,b_visitedMovies,&b_swapQueue,&b_actorQueue,1);
       if (interselect(a_visitedActors,b_visitedActors))
           return a_dist + b_dist;
     }
@@ -95,15 +95,14 @@ int64_t DistCalculator::dist(Node a, Node b) {
 }
 
 
-void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<int> *swapQueue, bool a) {
-    std::vector<int> actorQueue;
+void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<int> *swapQueue, std::vector<int> *actorQueue, bool a) {
     if (a)
         a_dist++;
     else
         b_dist++;
-    std::swap(actorQueue, *swapQueue);
+    std::swap(*actorQueue, *swapQueue);
     swapQueue->clear();
-    int s = actorQueue.front();
+    int s = actorQueue->front();
     for (auto &movie: actorMovies[s]) {
         if (visitedMovies[movie]) //besuchte movies werden übersprungen
             continue;
@@ -115,7 +114,7 @@ void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<i
             }
         }
     }
-    actorQueue.clear();
+    actorQueue->clear();
 }
 
 
