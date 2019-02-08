@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
    //new while
 
    while (cin >> a && cin >>b){
-      threads.push_back(std::async(std::launch::async,&DistCalculator::dist,dc,a,b));
+      threads.push_back(std::async(std::launch::async,&DistCalculator::dist,&dc,a,b));
    }
 
    for (std::vector<std::future<int64_t >>::iterator iterator = threads.begin(); iterator != threads.end(); iterator++)
