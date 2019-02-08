@@ -68,7 +68,6 @@ int64_t DistCalculator::dist(Node a, Node b) {
     a_visitedActors[a] = true;
 
     // Alles für Bidirektionale BFS von b aus
-    //Verscuh mit nur einer visitedActor Liste
 
     bool *b_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)

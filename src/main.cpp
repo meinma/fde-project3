@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
       threads.push_back(std::async(std::launch::async,&DistCalculator::dist,&dc,a,b));
    }
 
-   for (std::vector<std::future<int64_t >>::iterator iterator = threads.begin(); iterator != threads.end(); iterator++)
-      cout << iterator->get() << "\n";
+   for (auto& thread:threads)
+      cout << thread.get() << "\n";
    //Clear vector after usage
    threads.clear();
 
