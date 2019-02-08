@@ -106,19 +106,20 @@ bool DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *vi
         b_dist++;
     std::swap(*actorQueue, *swapQueue);
     swapQueue->clear();
-    int s = actorQueue->front();
-    for (auto &movie: actorMovies[s]) {
-        if (visitedMovies[movie]) //besuchte movies werden übersprungen
-            continue;
-        visitedMovies[movie] = true; //movies auf besucht setzen
-        for (auto &actor : movieActors[movie]) {
-            if (!visitedActors[actor] && !otherVisitedActors[actor]) {
-                swapQueue->push_back(actor);
-                visitedActors[actor] = true;
-            }
-            else if (otherVisitedActors[actor])
-               return true;
-        }
+    for(auto& s : *actorQueue){
+       for (auto &movie: actorMovies[s]) {
+           if (visitedMovies[movie]) //besuchte movies werden übersprungen
+               continue;
+           visitedMovies[movie] = true; //movies auf besucht setzen
+           for (auto &actor : movieActors[movie]) {
+               if (!visitedActors[actor] && !otherVisitedActors[actor]) {
+                   swapQueue->push_back(actor);
+                   visitedActors[actor] = true;
+               }
+               else if (otherVisitedActors[actor])
+                  return true;
+           }
+       }
     }
     actorQueue->clear();
     return false;
