@@ -89,7 +89,6 @@ int64_t DistCalculator::dist(Node a, Node b) {
     if (a == b)
         return 0;
 
-
     // Alles für Bidirektionale BFS von a aus
     bool *a_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
@@ -143,8 +142,8 @@ void DistCalculator::bfs(bool *visitedActors, bool *visitedMovies, std::vector<i
     for (auto &movie: actorMovies[s]) {
         if (visitedMovies[movie]) //besuchte movies werden übersprungen
             continue;
+        visitedMovies[movie] = true; //movies auf besucht setzen
         for (auto &actor : movieActors[movie]) {
-            visitedMovies[movie] = true; //movies werden auf besucht gesetzt
             if (!visitedActors[actor]) {
                 swapQueue->push_back(actor);
                 visitedActors[actor] = true;
