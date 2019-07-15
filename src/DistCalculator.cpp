@@ -47,21 +47,21 @@ DistCalculator::DistCalculator(std::string edgeListFile)
 }
 
 
-// Node a und b sind nur Zahlen
+// Node a and b are integers
 int64_t DistCalculator::dist(Node a, Node b) {
     if (a == b)
         return 0;
     int a_dist;
     int b_dist;
-    // Alles für Bidirektionale BFS von a aus
+    // Bidirectional BFS starting from a
     bool *a_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
         a_visitedActors[i] = false;
-    //speichert alle Movies, um mehrmaliges Besuchen zu verhindern
+    // Save all visited movies to prevent to visit a movie more than one time
     bool *a_visitedMovies = new bool[movieActors.size() + 1];
     for (int i = 0; i < movieActors.size(); i++)
         a_visitedMovies[i] = false;
-    //Initialisieren der Distanz
+    //Initializing of the distances
     a_dist = 0;
     b_dist = 0;
     std::vector<int> a_swapQueue;
@@ -69,17 +69,17 @@ int64_t DistCalculator::dist(Node a, Node b) {
     a_swapQueue.push_back(a);
     a_visitedActors[a] = true;
 
-    // Alles für Bidirektionale BFS von b aus
+    // Bidirectional BFS starting from b
 
     bool *b_visitedActors = new bool[actorMovies.size() + 1];
     for (int i = 0; i < actorMovies.size(); i++)
         b_visitedActors[i] = false;
 
-    //speichert alle Movies, um mehrmaliges Besuchen zu verhindern
+    //save all visisted movies to not visit some movies more often than one time
     bool *b_visitedMovies = new bool[movieActors.size() + 1];
     for (int i = 0; i < movieActors.size(); i++)
         b_visitedMovies[i] = false;
-    //Initialisieren der Distanz
+    //Initializing of the distance
     b_dist = 0;
     std::vector<int> b_swapQueue;
     std::vector<int> b_actorQueue;
@@ -108,9 +108,9 @@ bool DistCalculator::bfs(bool *visitedActors, bool *otherVisitedActors, bool *vi
     swapQueue->clear();
     for(auto& s : *actorQueue){
        for (auto &movie: actorMovies[s]) {
-           if (visitedMovies[movie]) //besuchte movies werden übersprungen
+           if (visitedMovies[movie]) //skip visited movies
                continue;
-           visitedMovies[movie] = true; //movies auf besucht setzen
+           visitedMovies[movie] = true; //set movies to visited
            for (auto &actor : movieActors[movie]) {
                if (!visitedActors[actor] && !otherVisitedActors[actor]) {
                    swapQueue->push_back(actor);
